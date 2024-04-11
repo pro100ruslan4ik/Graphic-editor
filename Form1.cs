@@ -5,20 +5,6 @@ using System.Windows.Forms;
 namespace graphicEditor
 {
 
-    //На будущее
-    //сделать ярлык показывающий текущие координаты, сделать возможность переходить вперед, назад (думаю контейнером)
-    //сделать реализацию ui через код, 
-    //также можно вынести код в отдельный файл, 
-    //сделать реализацию сплошного (заливки) рисования фигур, 
-
-
-    //Изменения
-    //сделал треугольник, сделал нормальную рисовку во все стороны, enum Modes, 
-    //сделал ярлыки показывающие текущие режим и толщину линии, переименовал некоторые компоненты
-    //сделал перо полем класса, чтобы постоянно его не пересоздавать,
-    //закоментил одну строчку - получил моментальную рисовку в режиме линии 
-    //сделал отображение фигуры перед рисовкой
-
     public enum Modes
     {
         ellipse,
@@ -26,6 +12,7 @@ namespace graphicEditor
         triangle,
         rectangle,
         ray,
+        curve,
         none
     }
 
@@ -51,34 +38,28 @@ namespace graphicEditor
             bitmap = new Bitmap(1300, 650);
             drawingBitmap = new Bitmap(1300, 650);
 
-            pen = new Pen(currColButton1.BackColor, widthTrackBar1.Value);
+            widthTrackBar.Minimum = 1;
+            widthLabel.Text = widthTrackBar.Value.ToString();
+
+            pen = new Pen(currentColorButton1.BackColor, widthTrackBar.Value);
             x1 = 0;
             y1 = 0;
 
             flagToImprovePerformance = true;
 
-            mode = Modes.line;
-            modeLabel.Text = "line";
+            mode = Modes.curve;
+            modeLabel.Text = "curve";
 
-            widthLabel.Text = widthTrackBar1.Value.ToString();
 
-            saveFileDialog1.Filter = "Файлы изображений (*.bmp, *.jpg, *.png)|*.bmp;*.jpg;*.png";
-            openFileDialog1.Filter = "Файлы изображений (*.bmp, *.jpg, *.png)|*.bmp;*.jpg;*.png";
-            openFileDialog1.FileName = "";
+            saveFileDialog.Filter = "Файлы изображений (*.bmp, *.jpg, *.png)|*.bmp;*.jpg;*.png";
+            openFileDialog.Filter = "Файлы изображений (*.bmp, *.jpg, *.png)|*.bmp;*.jpg;*.png";
+            openFileDialog.FileName = "";
         }
 
-        private void panel2_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void pictureBox_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
+
             xPressed = e.X;
             yPressed = e.Y;
         }
@@ -87,17 +68,17 @@ namespace graphicEditor
 
             if (e.Button == MouseButtons.Left)
             {
-                pen.Color = currColButton1.BackColor;
+                pen.Color = currentColorButton1.BackColor;
 
 
                 pen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
                 pen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
 
 
-                if (mode == Modes.line)
+                if (mode == Modes.curve)
                 {
                     Graphics graphics = Graphics.FromImage(bitmap);
-                    graphics.DrawLine(pen, x1, y1, e.X, e.Y); 
+                    graphics.DrawLine(pen, x1, y1, e.X, e.Y);
                 }
 
                 if (mode == Modes.ray)
@@ -147,6 +128,19 @@ namespace graphicEditor
 
                     return;
                 }
+                if (mode == Modes.line)
+                {
+                    Graphics drawingGraphics = Graphics.FromImage(drawingBitmap);
+                    drawingGraphics.DrawLine(pen, xPressed, yPressed, e.X, e.Y);
+                    pictureBox.Image = drawingBitmap;
+
+                    flagToImprovePerformance = !flagToImprovePerformance;
+
+                    if (flagToImprovePerformance)
+                        drawingBitmap = (Bitmap)bitmap.Clone();
+                    return;
+
+                }
 
             }
             pictureBox.Image = bitmap;
@@ -157,7 +151,7 @@ namespace graphicEditor
 
         private void pictureBox_MouseUp(object sender, MouseEventArgs e)
         {
-            pen.Color = currColButton1.BackColor;
+            pen.Color = currentColorButton1.BackColor;
 
             Graphics graphics = Graphics.FromImage(bitmap);
 
@@ -170,106 +164,114 @@ namespace graphicEditor
             if (mode == Modes.triangle)
                 DrawAnyTriangle(pen, e, graphics);
 
+            if (mode == Modes.line)
+                graphics.DrawLine(pen, xPressed, yPressed, e.X, e.Y);
+
             graphics.DrawImage(bitmap, 0, 0);
         }
 
 
-        private void button1_Click(object sender, EventArgs e)
+        private void colorButton1_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            Button button = (Button)sender;
-            currColButton1.BackColor = button.BackColor;
-        }
-
-        private void button3_Click(object sender, EventArgs e)
+        private void colorButton2_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
-            currColButton1.BackColor = button.BackColor;
+            currentColorButton1.BackColor = button.BackColor;
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void colorButton3_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
-            currColButton1.BackColor = button.BackColor;
+            currentColorButton1.BackColor = button.BackColor;
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void colorButton4_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
-            currColButton1.BackColor = button.BackColor;
+            currentColorButton1.BackColor = button.BackColor;
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void colorButton5_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
-            currColButton1.BackColor = button.BackColor;
+            currentColorButton1.BackColor = button.BackColor;
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void colorBbutton6_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
-            currColButton1.BackColor = button.BackColor;
+            currentColorButton1.BackColor = button.BackColor;
         }
 
-        private void button8_Click(object sender, EventArgs e)
+        private void colorButton7_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
-            currColButton1.BackColor = button.BackColor;
+            currentColorButton1.BackColor = button.BackColor;
         }
 
-        private void button9_Click(object sender, EventArgs e)
+        private void colorButton8_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
-            currColButton1.BackColor = button.BackColor;
+            currentColorButton1.BackColor = button.BackColor;
         }
 
-        private void button10_Click(object sender, EventArgs e)
+        private void colorButton9_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
-            currColButton1.BackColor = button.BackColor;
+            currentColorButton1.BackColor = button.BackColor;
         }
 
-        private void button11_Click(object sender, EventArgs e)
+        private void colorButton10_Click(object sender, EventArgs e)
+        {
+            Button button = (Button)sender;
+            currentColorButton1.BackColor = button.BackColor;
+        }
+
+        private void shapeButton11_Click(object sender, EventArgs e)
         {
             mode = Modes.ellipse;
             modeLabel.Text = "ellipse";
         }
 
-        private void button12_Click(object sender, EventArgs e)
+        private void shapeButton12_Click(object sender, EventArgs e)
         {
             mode = Modes.line;
             modeLabel.Text = "line";
         }
 
-        private void button13_Click(object sender, EventArgs e)
+        private void shapeButton13_Click(object sender, EventArgs e)
         {
             mode = Modes.triangle;
             modeLabel.Text = "triangle";
         }
 
-        private void button14_Click(object sender, EventArgs e)
+        private void shapeButton14_Click(object sender, EventArgs e)
         {
             mode = Modes.rectangle;
             modeLabel.Text = "rectangle";
         }
+
         private void shapeButton15_Click(object sender, EventArgs e)
         {
             mode = Modes.ray;
             modeLabel.Text = "ray";
         }
 
-
-        private void button14_MouseDown(object sender, MouseEventArgs e)
+        private void shapeButton16_Click(object sender, EventArgs e)
         {
+            mode = Modes.curve;
+            modeLabel.Text = "curve";
 
         }
-        private void button11_MouseUp(object sender, MouseEventArgs e)
-        {
 
+        private void deleteButton17_Click(object sender, EventArgs e)
+        {
+            bitmap = new Bitmap(1300, 650);
+            drawingBitmap = new Bitmap(1300, 650);
+            pictureBox.Image = bitmap;
         }
 
 
@@ -309,41 +311,20 @@ namespace graphicEditor
         }
 
 
-        private void файлToolStripMenuItem_Click(object sender, EventArgs e)
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void widthLabel_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-
-        }
-
-        private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            saveFileDialog1.FileName = "";
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK && saveFileDialog1.FileName != "")
+            saveFileDialog.FileName = "";
+            if (saveFileDialog.ShowDialog() == DialogResult.OK && saveFileDialog.FileName != "")
             {
-                bitmap.Save(saveFileDialog1.FileName);
+                bitmap.Save(saveFileDialog.FileName);
             }
         }
 
-        private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK && openFileDialog1.CheckFileExists)
+            if (openFileDialog.ShowDialog() == DialogResult.OK && openFileDialog.CheckFileExists)
             {
-                bitmap = (Bitmap)Image.FromFile(openFileDialog1.FileName);
+                bitmap = (Bitmap)Image.FromFile(openFileDialog.FileName);
 
                 pictureBox.Image = bitmap;
 
@@ -356,23 +337,18 @@ namespace graphicEditor
 
 
 
-        private void widthTrackBar1_Scroll(object sender, EventArgs e)
+        private void widthTrackBar_Scroll(object sender, EventArgs e)
         {
-            widthLabel.Text = widthTrackBar1.Value.ToString();
-            pen.Width = widthTrackBar1.Value;
+            widthLabel.Text = widthTrackBar.Value.ToString();
+            pen.Width = widthTrackBar.Value;
 
         }
 
-        private void saveFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-
-        }
-
-        private void выходToolStripMenuItem_Click(object sender, EventArgs e)
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
-        
+
     }
 }
