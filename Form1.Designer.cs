@@ -87,21 +87,21 @@
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new Size(180, 22);
+            saveToolStripMenuItem.Size = new Size(133, 22);
             saveToolStripMenuItem.Text = "Сохранить";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new Size(180, 22);
+            openToolStripMenuItem.Size = new Size(133, 22);
             openToolStripMenuItem.Text = "Открыть";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(180, 22);
+            exitToolStripMenuItem.Size = new Size(133, 22);
             exitToolStripMenuItem.Text = "Выход";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
@@ -391,7 +391,7 @@
             currentColorButton1.Size = new Size(37, 37);
             currentColorButton1.TabIndex = 0;
             currentColorButton1.UseVisualStyleBackColor = false;
-            currentColorButton1.Click += colorButton1_Click;
+            currentColorButton1.Click += currentColorButton1_Click;
             // 
             // saveFileDialog
             // 
@@ -435,15 +435,15 @@
         private Panel panel1;
         private Panel panel;
         private PictureBox pictureBox;
-        private Button colorButton2;
         private Button currentColorButton1;
-        private Button colorButton9;
-        private Button colorButton8;
-        private Button colorButton7;
-        private Button colorButton6;
-        private Button colorButton5;
-        private Button colorButton4;
+        private Button colorButton2;
         private Button colorButton3;
+        private Button colorButton4;
+        private Button colorButton5;
+        private Button colorButton6;
+        private Button colorButton7;
+        private Button colorButton8;
+        private Button colorButton9;
         private Button colorButton10;
         private Button shapeButton13;
         private Button shapeButton12;

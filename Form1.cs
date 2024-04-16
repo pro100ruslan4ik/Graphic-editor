@@ -23,8 +23,9 @@ namespace graphicEditor
 
         private Pen pen;
 
-        private int x1;
-        private int y1;
+        private int xCurrent;
+        private int yCurrent;
+
         private int xPressed;
         private int yPressed;
 
@@ -42,8 +43,11 @@ namespace graphicEditor
             widthLabel.Text = widthTrackBar.Value.ToString();
 
             pen = new Pen(currentColorButton1.BackColor, widthTrackBar.Value);
-            x1 = 0;
-            y1 = 0;
+            pen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
+            pen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+
+            xCurrent = 0;
+            yCurrent = 0;
 
             flagToImprovePerformance = true;
 
@@ -68,91 +72,72 @@ namespace graphicEditor
 
             if (e.Button == MouseButtons.Left)
             {
-                pen.Color = currentColorButton1.BackColor;
+                DrawOnMouseMove(e);
 
+            }
 
-                pen.StartCap = System.Drawing.Drawing2D.LineCap.Round;
-                pen.EndCap = System.Drawing.Drawing2D.LineCap.Round;
+            xCurrent = e.X;
+            yCurrent = e.Y;
+        }
+        
+        private void DrawOnMouseMove(MouseEventArgs e)
+        {
+            if (mode == Modes.curve || mode == Modes.ray)
+                DrawCurveOrRay(e);
+            else
+                DrawTempShape(e);
+        }
 
+        private void DrawCurveOrRay(MouseEventArgs e)
+        {
+            if (mode == Modes.curve)
+            {
+                Graphics graphics = Graphics.FromImage(bitmap);
+                graphics.DrawLine(pen, xCurrent, yCurrent, e.X, e.Y);
+            }
 
-                if (mode == Modes.curve)
-                {
-                    Graphics graphics = Graphics.FromImage(bitmap);
-                    graphics.DrawLine(pen, x1, y1, e.X, e.Y);
-                }
+            if (mode == Modes.ray)
+            {
+                Graphics graphics = Graphics.FromImage(bitmap);
+                graphics.DrawLine(pen, xPressed, yPressed, e.X, e.Y);
+            }
 
-                if (mode == Modes.ray)
-                {
-                    Graphics graphics = Graphics.FromImage(bitmap);
-                    graphics.DrawLine(pen, xPressed, yPressed, e.X, e.Y);
-                }
+            pictureBox.Image = bitmap;
+        }
+
+        private void DrawTempShape(MouseEventArgs e)
+        {
+            flagToImprovePerformance = !flagToImprovePerformance;
+
+            if (flagToImprovePerformance)   
+            {
+                Graphics drawingGraphics = Graphics.FromImage(drawingBitmap);
 
                 if (mode == Modes.rectangle)
                 {
-                    Graphics drawingGraphics = Graphics.FromImage(drawingBitmap);
                     DrawAnyRectangle(pen, e, drawingGraphics);
-                    pictureBox.Image = drawingBitmap;
-
-                    flagToImprovePerformance = !flagToImprovePerformance;
-
-                    if (flagToImprovePerformance)
-                        drawingBitmap = (Bitmap)bitmap.Clone();
-
-                    return;
                 }
 
                 if (mode == Modes.ellipse)
                 {
-                    Graphics drawingGraphics = Graphics.FromImage(drawingBitmap);
                     DrawAnyEllipse(pen, e, drawingGraphics);
-                    pictureBox.Image = drawingBitmap;
-
-                    flagToImprovePerformance = !flagToImprovePerformance;
-
-                    if (flagToImprovePerformance)
-                        drawingBitmap = (Bitmap)bitmap.Clone();
-
-                    return;
                 }
 
                 if (mode == Modes.triangle)
                 {
-                    Graphics drawingGraphics = Graphics.FromImage(drawingBitmap);
                     DrawAnyTriangle(pen, e, drawingGraphics);
-                    pictureBox.Image = drawingBitmap;
-
-                    flagToImprovePerformance = !flagToImprovePerformance;
-
-                    if (flagToImprovePerformance)
-                        drawingBitmap = (Bitmap)bitmap.Clone();
-
-                    return;
                 }
                 if (mode == Modes.line)
                 {
-                    Graphics drawingGraphics = Graphics.FromImage(drawingBitmap);
                     drawingGraphics.DrawLine(pen, xPressed, yPressed, e.X, e.Y);
-                    pictureBox.Image = drawingBitmap;
-
-                    flagToImprovePerformance = !flagToImprovePerformance;
-
-                    if (flagToImprovePerformance)
-                        drawingBitmap = (Bitmap)bitmap.Clone();
-                    return;
-
                 }
-
+            pictureBox.Image = drawingBitmap;
+            drawingBitmap = (Bitmap)bitmap.Clone();
             }
-            pictureBox.Image = bitmap;
-
-            x1 = e.X;
-            y1 = e.Y;
         }
 
         private void pictureBox_MouseUp(object sender, MouseEventArgs e)
         {
-            pen.Color = currentColorButton1.BackColor;
-
             Graphics graphics = Graphics.FromImage(bitmap);
 
             if (mode == Modes.rectangle)
@@ -171,7 +156,7 @@ namespace graphicEditor
         }
 
 
-        private void colorButton1_Click(object sender, EventArgs e)
+        private void currentColorButton1_Click(object sender, EventArgs e)
         {
 
         }
@@ -180,54 +165,63 @@ namespace graphicEditor
         {
             Button button = (Button)sender;
             currentColorButton1.BackColor = button.BackColor;
+            pen.Color = button.BackColor;
         }
 
         private void colorButton3_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
             currentColorButton1.BackColor = button.BackColor;
+            pen.Color = button.BackColor;
         }
 
         private void colorButton4_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
             currentColorButton1.BackColor = button.BackColor;
+            pen.Color = button.BackColor;
         }
 
         private void colorButton5_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
             currentColorButton1.BackColor = button.BackColor;
+            pen.Color = button.BackColor;
         }
 
         private void colorBbutton6_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
             currentColorButton1.BackColor = button.BackColor;
+            pen.Color = button.BackColor;
         }
 
         private void colorButton7_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
             currentColorButton1.BackColor = button.BackColor;
+            pen.Color = button.BackColor;
         }
 
         private void colorButton8_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
             currentColorButton1.BackColor = button.BackColor;
+            pen.Color = button.BackColor;
         }
 
         private void colorButton9_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
             currentColorButton1.BackColor = button.BackColor;
+            pen.Color = button.BackColor;
         }
 
         private void colorButton10_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
             currentColorButton1.BackColor = button.BackColor;
+            pen.Color = button.BackColor;
         }
 
         private void shapeButton11_Click(object sender, EventArgs e)
