@@ -80,12 +80,12 @@ namespace graphicEditor
             xCurrent = e.X;
             yCurrent = e.Y;
         }
-        
+
         private void DrawOnMouseMove(MouseEventArgs e)
         {
             if (mode == Modes.curve || mode == Modes.ray)
                 DrawCurveOrRay(e);
-            else if((DateTime.Now - startDrawTime).TotalMilliseconds > 15)
+            else if ((DateTime.Now - startDrawTime).TotalMilliseconds > 1)
             {
                 DrawTempShape(e);
                 startDrawTime = DateTime.Now;
