@@ -31,7 +31,8 @@ namespace graphicEditor
 
         private Modes mode;
 
-        private bool flagToImprovePerformance;
+        private DateTime startDrawTime;
+
         public Form1()
         {
             InitializeComponent();
@@ -49,7 +50,7 @@ namespace graphicEditor
             xCurrent = 0;
             yCurrent = 0;
 
-            flagToImprovePerformance = true;
+            startDrawTime = DateTime.Now;
 
             mode = Modes.curve;
             modeLabel.Text = "curve";
@@ -84,8 +85,11 @@ namespace graphicEditor
         {
             if (mode == Modes.curve || mode == Modes.ray)
                 DrawCurveOrRay(e);
-            else
+            else if((DateTime.Now - startDrawTime).TotalMilliseconds > 15)
+            {
                 DrawTempShape(e);
+                startDrawTime = DateTime.Now;
+            }
         }
 
         private void DrawCurveOrRay(MouseEventArgs e)
@@ -107,33 +111,29 @@ namespace graphicEditor
 
         private void DrawTempShape(MouseEventArgs e)
         {
-            flagToImprovePerformance = !flagToImprovePerformance;
+            Graphics drawingGraphics = Graphics.FromImage(drawingBitmap);
 
-            if (flagToImprovePerformance)   
+            if (mode == Modes.rectangle)
             {
-                Graphics drawingGraphics = Graphics.FromImage(drawingBitmap);
+                DrawAnyRectangle(pen, e, drawingGraphics);
+            }
 
-                if (mode == Modes.rectangle)
-                {
-                    DrawAnyRectangle(pen, e, drawingGraphics);
-                }
+            if (mode == Modes.ellipse)
+            {
+                DrawAnyEllipse(pen, e, drawingGraphics);
+            }
 
-                if (mode == Modes.ellipse)
-                {
-                    DrawAnyEllipse(pen, e, drawingGraphics);
-                }
+            if (mode == Modes.triangle)
+            {
+                DrawAnyTriangle(pen, e, drawingGraphics);
+            }
+            if (mode == Modes.line)
+            {
+                drawingGraphics.DrawLine(pen, xPressed, yPressed, e.X, e.Y);
+            }
 
-                if (mode == Modes.triangle)
-                {
-                    DrawAnyTriangle(pen, e, drawingGraphics);
-                }
-                if (mode == Modes.line)
-                {
-                    drawingGraphics.DrawLine(pen, xPressed, yPressed, e.X, e.Y);
-                }
             pictureBox.Image = drawingBitmap;
             drawingBitmap = (Bitmap)bitmap.Clone();
-            }
         }
 
         private void pictureBox_MouseUp(object sender, MouseEventArgs e)
